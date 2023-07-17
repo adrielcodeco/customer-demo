@@ -88,10 +88,10 @@
       "<rootDir>/src/**/*.(t|j)s"
     ],
     "coverageReporters": [
-      "text",
+      "lcov",
       "cobertura"
     ],
-    "coverageDirectory": "../coverage",
+    "coverageDirectory": "coverage",
     "testEnvironment": "node"
   }
 }

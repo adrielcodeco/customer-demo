@@ -2,6 +2,8 @@
 
 Demo API
 
+The demo is available at [https://customers-api-demo.co2lab.info](https://customers-api-demo.co2lab.info)
+
 ## Installation
 
 ```bash
