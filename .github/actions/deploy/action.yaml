@@ -17,7 +17,7 @@ inputs:
   backend-bucket:
     description: 'terraform backend bucket name'
     required: true
-    default: 'terraform-backend'
+    default: 'customers-api-demo-terraform-backend'
   backend-bucket-key:
     description: 'terraform backend bucket key'
     required: true

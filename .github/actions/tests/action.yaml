@@ -43,9 +43,11 @@ runs:
       shell: bash
       run: pnpm test:cov
 
+    - name: Install dependencies
+      shell: bash
+      run: npx tree-node-cli
+
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v3
-      with:
-        files: coverage/lcov.info
       env:
         CODECOV_TOKEN: ${{ inputs.CODECOV_TOKEN }}
