@@ -1,4 +1,4 @@
-name: Build
+name: Promote Production
 on:
   push:
     branches:
