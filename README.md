@@ -1,5 +1,7 @@
 # Customers API
 
+[![codecov](https://codecov.io/gh/adrielcodeco/customer-demo/branch/develop/graph/badge.svg?token=rdlj9hy3im)](https://codecov.io/gh/adrielcodeco/customer-demo)
+
 Demo API
 
 The demo is available at [https://customers-api-demo.co2lab.info](https://customers-api-demo.co2lab.info)
@@ -67,3 +69,9 @@ The pipelines are automated, the application will be deployed to production if t
 the main branch.
 
 The automation run a terraform that deploy a AWS App Runner service.
+
+## Teste coverage
+
+[![codecov](https://codecov.io/gh/adrielcodeco/customer-demo/branch/develop/graph/badge.svg?token=rdlj9hy3im)](https://codecov.io/gh/adrielcodeco/customer-demo)
+
+[![codecov](https://codecov.io/gh/adrielcodeco/customer-demo/branch/develop/graphs/sunburst.svg?token=rdlj9hy3im)](https://codecov.io/gh/adrielcodeco/customer-demo)
