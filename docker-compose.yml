@@ -1,0 +1,50 @@
+version: '3.9'
+services:
+  cache:
+    image: redis:alpine
+    container_name: cache
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning
+
+  demo:
+    build:
+      context: .
+    image: demo:latest
+    container_name: demo
+    hostname: demo
+    healthcheck:
+      test:
+        - 'CMD-SHELL'
+        - "wget --no-check-certificate --no-verbose --tries=1 --spider -q --timeout=100 'http://localhost:8000/health' || exit 1"
+      interval: 3s
+      timeout: 2s
+      retries: 30
+    environment:
+      REDIS_HOST: cache.redis
+      AUTH_INTROSPECTION_URL: ${AUTH_INTROSPECTION_URL}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
+      AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET}
+    ports:
+      - '8000:8000'
+    links:
+      - cache:cache.redis
+    depends_on:
+      cache:
+        condition: service_started
+
+  demo-test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    image: demo-test:latest
+    container_name: demo-test
+    hostname: demo-test
+    environment:
+      AUTH_TOKEN_URL: ${AUTH_TOKEN_URL}
+      AUTH_INTROSPECTION_URL: ${AUTH_INTROSPECTION_URL}
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
+      AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET}
+      AUTH_USERNAME: ${AUTH_USERNAME}
+      AUTH_PASSWORD: ${AUTH_PASSWORD}

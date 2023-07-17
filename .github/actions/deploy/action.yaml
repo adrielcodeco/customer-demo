@@ -1,0 +1,73 @@
+name: 'Build and push'
+description: 'Build docker image and push to repo'
+inputs:
+  env:
+    description: 'environment'
+    required: true
+  aws-region:
+    description: 'aws region'
+    required: true
+    default: 'us-east-2'
+  backend-bucket:
+    description: 'terraform backend bucket name'
+    required: true
+    default: 'terraform-backend'
+  backend-bucket-key:
+    description: 'terraform backend bucket key'
+    required: true
+    default: 'customers-api-demo-ecs-state'
+  image:
+    description: 'container image to deploy'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Setup Terraform CLI
+      uses: hashicorp/setup-terraform@v2
+
+    - name: Terraform fmt
+      id: fmt
+      run: terraform fmt -check
+      continue-on-error: true
+
+    - name: Terraform Init
+      id: init
+      run: |
+        terraform init \
+          -backend-config="bucket=${{ inputs.backend-bucket }}" \
+          -backend-config="key=${{ inputs.backend-bucket-key }}-${{ inputs.env }}" \
+          -backend-config="region=${{ inputs.aws-region }}"
+
+    - name: Terraform Validate
+      id: validate
+      run: terraform validate -no-color
+
+    - name: Terraform Plan
+      id: plan
+      run: |
+        terraform plan \
+          -no-color \
+          -var="service_name=customers-api-demo-${{ inputs.env }}" \
+          -var="image=${{ inputs.image }}" \
+          -var="AUTH_INTROSPECTION_URL=${{ secrets.AUTH_INTROSPECTION_URL }}" \
+          -var="AUTH_CLIENT_ID=${{ secrets.AUTH_CLIENT_ID }}" \
+          -var="AUTH_CLIENT_SECRET=${{ secrets.AUTH_CLIENT_SECRET }}"
+
+    - name: Terraform Apply
+      id: apply
+      run: |
+        terraform apply \
+          -auto-approve \
+          -no-color \
+          -var="service_name=customers-api-demo-${{ inputs.env }}" \
+          -var="image=${{ inputs.image }}" \
+          -var="AUTH_INTROSPECTION_URL=${{ secrets.AUTH_INTROSPECTION_URL }}" \
+          -var="AUTH_CLIENT_ID=${{ secrets.AUTH_CLIENT_ID }}" \
+          -var="AUTH_CLIENT_SECRET=${{ secrets.AUTH_CLIENT_SECRET }}"

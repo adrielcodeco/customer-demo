@@ -1,0 +1,68 @@
+name: 'Build and push'
+description: 'Build docker image and push to repo'
+inputs:
+  aws-region:
+    description: 'aws region'
+    required: true
+    default: 'us-east-2'
+  env:
+    description: 'environment'
+runs:
+  using: 'composite'
+  steps:
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ inputs.aws-region }}
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v2
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Login to AWS ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: get image tag
+      run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
+
+    - name: 'Build and push'
+      if: ${{ inputs.env != '' }}
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ inputs.env }}-${{ env.IMAGE_TAG }}
+          ${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ inputs.env }}-latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: |
+          linux/amd64
+
+    - name: 'output'
+      if: ${{ inputs.env != '' }}
+      run: echo "PUSHED_IMAGE=${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ inputs.env }}-${{ env.IMAGE_TAG }}" >> "$GITHUB_ENV"
+
+    - name: 'Build and push'
+      if: ${{ inputs.env == '' }}
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        push: true
+        tags: |
+          ${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ env.IMAGE_TAG }}
+          ${{ steps.login-ecr.outputs.registry }}/customers-api-demo:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+        platforms: |
+          linux/amd64
+
+    - name: 'output'
+      if: ${{ inputs.env == '' }}
+      run: echo "PUSHED_IMAGE=${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ env.IMAGE_TAG }}" >> "$GITHUB_ENV"

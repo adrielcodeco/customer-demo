@@ -1,0 +1,22 @@
+FROM node:lts-alpine
+
+WORKDIR /api
+
+RUN apk add --update jq python3 make g++
+
+COPY pnpm-lock.yaml                     .
+
+RUN npm install -g pnpm
+
+RUN pnpm fetch
+
+COPY package.json                       .
+
+RUN pnpm install --no-optional --ignore-scripts --prefer-offline --frozen-lockfile
+
+COPY ./src                              ./src
+COPY ./test                             ./test
+COPY ./tsconfig.json                    .
+COPY ./tsconfig.build.json              .
+
+CMD pnpm test:cov
