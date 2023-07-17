@@ -17,3 +17,7 @@ variable "AUTH_CLIENT_ID" {
 variable "AUTH_CLIENT_SECRET" {
   type = string
 }
+
+variable "REDIS_HOST" {
+  type = string
+}

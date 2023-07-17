@@ -4,7 +4,7 @@
 
 Demo API
 
-The demo is available at [https://customers-api-demo.co2lab.info](https://customers-api-demo.co2lab.info)
+The demo is available at [https://customers-api-demo.co2lab.info/api](https://customers-api-demo.co2lab.info/api)
 
 ## Installation
 

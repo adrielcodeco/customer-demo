@@ -53,6 +53,7 @@ resource "aws_apprunner_service" "customers-api-demo" {
           AUTH_INTROSPECTION_URL = var.AUTH_INTROSPECTION_URL
           AUTH_CLIENT_ID         = var.AUTH_CLIENT_ID
           AUTH_CLIENT_SECRET     = var.AUTH_CLIENT_SECRET
+          REDIS_HOST             = var.REDIS_HOST
         }
       }
       image_identifier      = var.image

@@ -50,3 +50,4 @@ jobs:
           AUTH_INTROSPECTION_URL: '${{ secrets.AUTH_INTROSPECTION_URL }}'
           AUTH_CLIENT_ID: '${{ secrets.AUTH_CLIENT_ID }}'
           AUTH_CLIENT_SECRET: '${{ secrets.AUTH_CLIENT_SECRET }}'
+          REDIS_HOST: '${{ secrets.REDIS_HOST }}'

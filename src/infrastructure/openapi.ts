@@ -4,7 +4,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 export const useOpenAPI = (app: NestFastifyApplication) => {
   const config = new DocumentBuilder()
     .setTitle('Customer API')
-    .setDescription('Desafio para Backend Developer NodeJS')
+    .setDescription('Customer API Demo')
     .setVersion('1.0.0')
     .build()
 

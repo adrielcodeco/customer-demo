@@ -34,6 +34,9 @@ inputs:
   AUTH_CLIENT_SECRET:
     description: 'auth client secret'
     required: true
+  REDIS_HOST:
+    description: 'redis host'
+    required: true
 runs:
   using: 'composite'
   steps:
@@ -81,7 +84,8 @@ runs:
           -var="image=${{ inputs.image }}" \
           -var="AUTH_INTROSPECTION_URL=${{ inputs.AUTH_INTROSPECTION_URL }}" \
           -var="AUTH_CLIENT_ID=${{ inputs.AUTH_CLIENT_ID }}" \
-          -var="AUTH_CLIENT_SECRET=${{ inputs.AUTH_CLIENT_SECRET }}"
+          -var="AUTH_CLIENT_SECRET=${{ inputs.AUTH_CLIENT_SECRET }}" \
+          -var="REDIS_HOST=${{ inputs.REDIS_HOST }}"
 
     - name: Terraform Apply
       id: apply
@@ -95,4 +99,5 @@ runs:
           -var="image=${{ inputs.image }}" \
           -var="AUTH_INTROSPECTION_URL=${{ inputs.AUTH_INTROSPECTION_URL }}" \
           -var="AUTH_CLIENT_ID=${{ inputs.AUTH_CLIENT_ID }}" \
-          -var="AUTH_CLIENT_SECRET=${{ inputs.AUTH_CLIENT_SECRET }}"
+          -var="AUTH_CLIENT_SECRET=${{ inputs.AUTH_CLIENT_SECRET }}" \
+          -var="REDIS_HOST=${{ inputs.REDIS_HOST }}"
