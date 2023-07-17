@@ -29,6 +29,7 @@ runs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: get image tag
+      shell: bash
       run: echo "IMAGE_TAG=$(date +%Y%m%d%H%M)" >> $GITHUB_ENV
 
     - name: 'Build and push'
@@ -47,6 +48,7 @@ runs:
 
     - name: 'output'
       if: ${{ inputs.env != '' }}
+      shell: bash
       run: echo "PUSHED_IMAGE=${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ inputs.env }}-${{ env.IMAGE_TAG }}" >> "$GITHUB_ENV"
 
     - name: 'Build and push'
@@ -65,4 +67,5 @@ runs:
 
     - name: 'output'
       if: ${{ inputs.env == '' }}
+      shell: bash
       run: echo "PUSHED_IMAGE=${{ steps.login-ecr.outputs.registry }}/customers-api-demo:${{ env.IMAGE_TAG }}" >> "$GITHUB_ENV"

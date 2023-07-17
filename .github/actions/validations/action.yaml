@@ -32,6 +32,7 @@ runs:
           ${{ runner.os }}-pnpm-store-
 
     - name: Install dependencies
+      shell: bash
       run: pnpm install
 
     # - name: Code Lint
@@ -39,5 +40,6 @@ runs:
     #   run: pnpm lint
 
     - name: Type Check
+      shell: bash
       id: pnpm-typecheck
       run: pnpm typecheck
