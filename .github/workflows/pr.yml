@@ -9,5 +9,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@master
+        with:
+          persist-credentials: false
+
       - name: 'Tests'
         uses: ./.github/actions/tests
