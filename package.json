@@ -87,6 +87,10 @@
     "collectCoverageFrom": [
       "<rootDir>/src/**/*.(t|j)s"
     ],
+    "coverageReporters": [
+      "text",
+      "cobertura"
+    ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }

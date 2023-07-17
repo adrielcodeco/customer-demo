@@ -17,6 +17,8 @@ jobs:
 
       - name: 'Tests'
         uses: ./.github/actions/tests
+        with:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   build:
     name: build
