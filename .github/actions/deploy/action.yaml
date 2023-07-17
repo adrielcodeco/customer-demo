@@ -4,6 +4,12 @@ inputs:
   env:
     description: 'environment'
     required: true
+  aws-access-key-id:
+    description: 'aws access key id'
+    required: true
+  aws-secret-access-key:
+    description: 'aws secret access key'
+    required: true
   aws-region:
     description: 'aws region'
     required: true
@@ -19,14 +25,23 @@ inputs:
   image:
     description: 'container image to deploy'
     required: true
+  AUTH_INTROSPECTION_URL:
+    description: 'auth introspection url'
+    required: true
+  AUTH_CLIENT_ID:
+    description: 'auth client id'
+    required: true
+  AUTH_CLIENT_SECRET:
+    description: 'auth client secret'
+    required: true
 runs:
   using: 'composite'
   steps:
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ inputs.aws-access-key-id }}
+        aws-secret-access-key: ${{ inputs.aws-secret-access-key }}
         aws-region: ${{ inputs.aws-region }}
 
     - name: Setup Terraform CLI
@@ -60,9 +75,9 @@ runs:
           -no-color \
           -var="service_name=customers-api-demo-${{ inputs.env }}" \
           -var="image=${{ inputs.image }}" \
-          -var="AUTH_INTROSPECTION_URL=${{ secrets.AUTH_INTROSPECTION_URL }}" \
-          -var="AUTH_CLIENT_ID=${{ secrets.AUTH_CLIENT_ID }}" \
-          -var="AUTH_CLIENT_SECRET=${{ secrets.AUTH_CLIENT_SECRET }}"
+          -var="AUTH_INTROSPECTION_URL=${{ inputs.AUTH_INTROSPECTION_URL }}" \
+          -var="AUTH_CLIENT_ID=${{ inputs.AUTH_CLIENT_ID }}" \
+          -var="AUTH_CLIENT_SECRET=${{ inputs.AUTH_CLIENT_SECRET }}"
 
     - name: Terraform Apply
       id: apply
@@ -73,6 +88,6 @@ runs:
           -no-color \
           -var="service_name=customers-api-demo-${{ inputs.env }}" \
           -var="image=${{ inputs.image }}" \
-          -var="AUTH_INTROSPECTION_URL=${{ secrets.AUTH_INTROSPECTION_URL }}" \
-          -var="AUTH_CLIENT_ID=${{ secrets.AUTH_CLIENT_ID }}" \
-          -var="AUTH_CLIENT_SECRET=${{ secrets.AUTH_CLIENT_SECRET }}"
+          -var="AUTH_INTROSPECTION_URL=${{ inputs.AUTH_INTROSPECTION_URL }}" \
+          -var="AUTH_CLIENT_ID=${{ inputs.AUTH_CLIENT_ID }}" \
+          -var="AUTH_CLIENT_SECRET=${{ inputs.AUTH_CLIENT_SECRET }}"

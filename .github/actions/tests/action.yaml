@@ -1,42 +1,49 @@
 name: 'Tests'
 description: 'test the source code'
+inputs:
+  CODECOV_TOKEN:
+    description: 'CODECOV_TOKEN'
+    required: true
 runs:
   using: 'composite'
   steps:
-    - name: Set up QEMU
-      if: ${{ !contains(github.event.head_commit.message, '#skip-tests') }}
-      uses: docker/setup-qemu-action@v2
-
-    - name: Set up Docker Buildx
-      if: ${{ !contains(github.event.head_commit.message, '#skip-tests') }}
-      id: buildx
-      uses: docker/setup-buildx-action@v2
-
-    - name: Cache Docker layers
-      if: ${{ !contains(github.event.head_commit.message, '#skip-tests') }}
-      uses: actions/cache@v2
+    - name: Set up Node.js
+      uses: actions/setup-node@master
       with:
-        path: /tmp/.buildx-cache
-        key: ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile.test') }}
-        restore-keys: |
-          ${{ runner.os }}-buildx-${{ hashFiles('Dockerfile.test') }}
+        node-version: 'lts/*'
+        check-latest: trues
+        always-auth: true
 
-    - name: 'test - Build'
-      if: ${{ !contains(github.event.head_commit.message, '#skip-tests') }}
+    - uses: pnpm/action-setup@v2
+      name: Install pnpm
+      id: pnpm-install
+      with:
+        version: latest
+        run_install: false
+
+    - name: Get pnpm store directory
+      id: pnpm-cache
       shell: bash
       run: |
-        docker buildx build \
-          --load \
-          --platform "linux/amd64" \
-          --cache-from "type=gha" \
-          --cache-to "type=gha,mode=max" \
-          -t "demo-test:latest" \
-          -f "Dockerfile.test" \
-          .
+        echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
 
-    - name: Run Tests
-      if: ${{ !contains(github.event.head_commit.message, '#skip-tests') }}
-      uses: adrielcodeco/docker-compose-run-action@main
+    - uses: actions/cache@v3
+      name: Setup pnpm cache
       with:
-        compose-file: './docker-compose.yml'
-        service: demo-test
+        path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+        key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+        restore-keys: |
+          ${{ runner.os }}-pnpm-store-
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm install
+
+    - name: Install dependencies
+      shell: bash
+      run: pnpm test:cov
+
+    - name: Upload coverage reports to Codecov
+      uses: codecov/codecov-action@v3
+      env:
+        CODECOV_TOKEN: ${{ inputs.CODECOV_TOKEN }}

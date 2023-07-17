@@ -36,9 +36,16 @@ jobs:
         uses: ./.github/actions/build-and-push
         with:
           env: 'staging'
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
 
       - name: 'Deploy'
         uses: ./.github/actions/deploy
         with:
           env: 'staging'
           image: '${{ env.PUSHED_IMAGE }}'
+          aws-access-key-id: '${{ secrets.AWS_ACCESS_KEY_ID }}'
+          aws-secret-access-key: '${{ secrets.AWS_SECRET_ACCESS_KEY }}'
+          AUTH_INTROSPECTION_URL: '${{ secrets.AUTH_INTROSPECTION_URL }}'
+          AUTH_CLIENT_ID: '${{ secrets.AUTH_CLIENT_ID }}'
+          AUTH_CLIENT_SECRET: '${{ secrets.AUTH_CLIENT_SECRET }}'
